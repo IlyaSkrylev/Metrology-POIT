@@ -50,6 +50,9 @@
             this.l3 = new System.Windows.Forms.Label();
             this.l2 = new System.Windows.Forms.Label();
             this.l1 = new System.Windows.Forms.Label();
+            this.lMaxNesting = new System.Windows.Forms.Label();
+            this.lAbsComp = new System.Windows.Forms.Label();
+            this.lRelComp = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOperators)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOperands)).BeginInit();
             this.SuspendLayout();
@@ -191,12 +194,11 @@
             // rtbText
             // 
             this.rtbText.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.rtbText.Location = new System.Drawing.Point(728, 197);
+            this.rtbText.Location = new System.Drawing.Point(728, 294);
             this.rtbText.Name = "rtbText";
-            this.rtbText.Size = new System.Drawing.Size(559, 511);
+            this.rtbText.Size = new System.Drawing.Size(559, 414);
             this.rtbText.TabIndex = 5;
             this.rtbText.Text = "";
-            this.rtbText.TextChanged += new System.EventHandler(this.rtbText_TextChanged);
             // 
             // lUOperator
             // 
@@ -248,11 +250,44 @@
             this.l1.TabIndex = 10;
             this.l1.Text = "Словарь программы";
             // 
+            // lMaxNesting
+            // 
+            this.lMaxNesting.AutoSize = true;
+            this.lMaxNesting.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lMaxNesting.Location = new System.Drawing.Point(724, 229);
+            this.lMaxNesting.Name = "lMaxNesting";
+            this.lMaxNesting.Size = new System.Drawing.Size(231, 20);
+            this.lMaxNesting.TabIndex = 11;
+            this.lMaxNesting.Text = "Максимальная вложенность:";
+            // 
+            // lAbsComp
+            // 
+            this.lAbsComp.AutoSize = true;
+            this.lAbsComp.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lAbsComp.Location = new System.Drawing.Point(724, 259);
+            this.lAbsComp.Name = "lAbsComp";
+            this.lAbsComp.Size = new System.Drawing.Size(194, 20);
+            this.lAbsComp.TabIndex = 12;
+            this.lAbsComp.Text = "Абсолютная сложность:";
+            // 
+            // lRelComp
+            // 
+            this.lRelComp.AutoSize = true;
+            this.lRelComp.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lRelComp.Location = new System.Drawing.Point(1019, 259);
+            this.lRelComp.Name = "lRelComp";
+            this.lRelComp.Size = new System.Drawing.Size(219, 20);
+            this.lRelComp.TabIndex = 13;
+            this.lRelComp.Text = "Относительная сложность:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1304, 790);
+            this.Controls.Add(this.lRelComp);
+            this.Controls.Add(this.lAbsComp);
+            this.Controls.Add(this.lMaxNesting);
             this.Controls.Add(this.l1);
             this.Controls.Add(this.l2);
             this.Controls.Add(this.l3);
@@ -291,6 +326,9 @@
         private System.Windows.Forms.Label l3;
         private System.Windows.Forms.Label l2;
         private System.Windows.Forms.Label l1;
+        private System.Windows.Forms.Label lMaxNesting;
+        private System.Windows.Forms.Label lAbsComp;
+        private System.Windows.Forms.Label lRelComp;
     }
 }
 

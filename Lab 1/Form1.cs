@@ -13,6 +13,13 @@ using System.Windows.Forms;
 
 namespace Lab_1
 {
+    struct switches
+    {
+        public int numCase;
+        public int start;
+        public int nowNesting;
+    }
+
     public partial class Form1 : Form
     {
         Dictionary<string, int> operandsList = new Dictionary<string, int>();
@@ -21,14 +28,15 @@ namespace Lab_1
         // ключевые слова, которые идут вместе со скобками /*сюда надо добавлять имена функций*/
         List<string> operatorsWithParenthesis = new List<string>
         {
-            "for", "while", "if", "do", "push"
+            "for", "while", "if", "do", "switch"
         };
 
         // ключевые слова, которые не являются операндами
         List<string> reservedWords = new List<string>
         {
             "if", "else", "for", "while", "return", "function", "var", "let", "const",
-            "class", "interface", "public", "private", "protected", "static", "void", "any", "", "do", "number", "push"
+            "class", "interface", "public", "private", "protected", "static", "void", 
+            "any", "", "do", "number", "push", "case", "switch", "default"
         };
 
         List<string> functionsName = new List<string>();
@@ -44,18 +52,14 @@ namespace Lab_1
             dgvOperands.Rows.Clear();
             rtbText.Clear();
 
-            // Считываем с файла код и заносим в text
+            string filePath = "text.txt";
+            string[] lines = File.ReadAllLines(filePath);
             string text = "";
-            string path = "text.txt";
-            StreamReader sr = new StreamReader(path);
-            string line = sr.ReadLine();
-            while (line != null)
+            foreach (var line in lines)
             {
                 rtbText.Text += line + '\n';
                 text += line + '\n';
-                line = sr.ReadLine();
             }
-            sr.Close();
             
             operatorsList["+"] = Regex.Matches(text, @"[^\+]\+[^\+\=]").Count;
             operatorsList["-"] = Regex.Matches(text, @"[^\-]\-[^\-\=]").Count;
@@ -108,6 +112,8 @@ namespace Lab_1
             operatorsList["while"] = Regex.Matches(text, @"\bwhile\b", RegexOptions.IgnoreCase).Count - operatorsList["do"];
             operatorsList["for"] = Regex.Matches(text, @"\bfor\b", RegexOptions.IgnoreCase).Count;
             operatorsList["push"] = Regex.Matches(text, @"\bpush\b", RegexOptions.IgnoreCase).Count;
+            operatorsList["case"] = Regex.Matches(text, @"\bcase\b", RegexOptions.IgnoreCase).Count;
+            operatorsList["default"] = Regex.Matches(text, @"\bdefault\b", RegexOptions.IgnoreCase).Count;
 
             GetWordsAfterFunction(text);
             foreach(var fName in functionsName)
@@ -158,6 +164,17 @@ namespace Lab_1
             l1.Text = "Словарь программы: " + (numUnicOperators + numUnicOperands);
             l2.Text = "Длина программы: " + (numOperators + numOperands);
             l3.Text = "Объём программы: " + Math.Round((numOperators + numOperands) * Math.Log((numUnicOperators + numUnicOperands), 2), 3);
+
+            int maxNesting = GetMaxNesting(lines);
+            lMaxNesting.Text = "Максимальная вложенность: " + maxNesting;
+
+            // Абсолютная сложность
+            int AbsComp = operatorsList["while"] + operatorsList["if"] + operatorsList["for"] + operatorsList["case"] + operatorsList["default"];
+            lAbsComp.Text = "Абсолютная сложность: " + AbsComp;
+
+            // Относительная сложность
+            double relComp = Math.Round(AbsComp / (double)numOperators, 3);
+            lRelComp.Text = "Относительная сложность: " + relComp;
         }
 
         public Dictionary<string, int> ExtractOperands(string tsCode)
@@ -184,7 +201,6 @@ namespace Lab_1
                     }
                 }
             }
-
             return operandsList;
         }
 
@@ -229,9 +245,57 @@ namespace Lab_1
             }
         }
 
-        private void rtbText_TextChanged(object sender, EventArgs e)
+        private int GetMaxNesting(string[] lines)
         {
+            switches[] sw = new switches[50];
+            int pointer = -1;
+            int maxNesting = -1;
+            int currentNesting = -1;
+            int nowPosition = 0;
 
+            foreach (var line in lines)
+            {
+                string trimmedLine = line.Trim();
+                if (trimmedLine.StartsWith("switch"))
+                {
+                    pointer++;
+                    sw[pointer].numCase = 0;
+                    sw[pointer].start = nowPosition;
+                    sw[pointer].nowNesting = currentNesting;
+                    nowPosition++;
+                }
+
+                if (trimmedLine.StartsWith("for") || trimmedLine.StartsWith("while") || trimmedLine.StartsWith("do") ||
+                    trimmedLine.StartsWith("case") || trimmedLine.StartsWith("if") || trimmedLine.StartsWith("else") || trimmedLine.StartsWith("deafult"))
+                {
+                    if (trimmedLine.StartsWith("case") || trimmedLine.StartsWith("deafult"))
+                    {
+                        if (sw[pointer].numCase == 0)
+                            currentNesting++;
+                        else
+                            currentNesting += 2;
+                        sw[pointer].numCase++;
+                    }
+                    else
+                        currentNesting++;
+                    nowPosition++;
+                    maxNesting = Math.Max(maxNesting, currentNesting);
+                }
+
+                if (trimmedLine == "}")
+                {
+                    nowPosition--;
+                    currentNesting--;
+                    if (pointer > -1 && sw[pointer].start == nowPosition)
+                    {
+                        currentNesting = sw[pointer].nowNesting;
+                        pointer--;
+                    }
+                }
+            }
+
+            return maxNesting;
         }
+
     }
 }
